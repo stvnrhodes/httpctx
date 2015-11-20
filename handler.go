@@ -44,20 +44,19 @@ func OldHandleFunc(f func(http.ResponseWriter, *http.Request)) HandlerFunc {
 	return HandlerFunc(func(_ context.Context, w http.ResponseWriter, r *http.Request) { f(w, r) })
 }
 
-func rootHandler(h Handler) http.Handler {
+func rootHandler(ctx context.Context, h Handler) http.Handler {
 	if h == nil {
 		return nil
 	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.Background()
 		h.ServeHTTP(ctx, w, r)
 	})
 }
 
 // ListenAndServe listens on the TCP network address addr and then calls Serve
 // with handler to handle requests on incoming connections.
-func ListenAndServe(addr string, handler Handler) error {
-	return http.ListenAndServe(addr, rootHandler(handler))
+func ListenAndServe(ctx context.Context, addr string, handler Handler) error {
+	return http.ListenAndServe(addr, rootHandler(ctx, handler))
 }
 
 // ListenAndServeTLS acts identically to ListenAndServe, except that it
@@ -65,6 +64,6 @@ func ListenAndServe(addr string, handler Handler) error {
 // matching private key for the server must be provided. If the certificate
 // is signed by a certificate authority, the certFile should be the concatenation
 // of the server's certificate, any intermediates, and the CA's certificate.
-func ListenAndServeTLS(addr string, certFile string, keyFile string, handler Handler) error {
-	return http.ListenAndServeTLS(addr, certFile, keyFile, rootHandler(handler))
+func ListenAndServeTLS(ctx context.Context, addr string, certFile string, keyFile string, handler Handler) error {
+	return http.ListenAndServeTLS(addr, certFile, keyFile, rootHandler(ctx, handler))
 }
