@@ -1,5 +1,5 @@
 // Package httpctx provides handlers to work with http and contexts.
-package httpctx // import "stvn.cc/httpctx"
+package httpctx
 
 import (
 	"net/http"
